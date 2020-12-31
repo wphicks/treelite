@@ -5,9 +5,11 @@
  * \author Hyunsu Cho
  */
 
+#include <dmlc/logging.h>
 #include <dmlc/registry.h>
 #include <treelite/frontend.h>
 #include <treelite/tree.h>
+
 #include <memory>
 #include <queue>
 
@@ -177,7 +179,8 @@ TreeBuilder::~TreeBuilder() = default;
 void
 TreeBuilder::CreateNode(int node_key) {
   auto& nodes = pimpl_->tree.nodes;
-  CHECK_EQ(nodes.count(node_key), 0) << "CreateNode: nodes with duplicate keys are not allowed";
+  CHECK_EQ(nodes.find(node_key), nodes.end())
+      << "CreateNode: nodes with duplicate keys are not allowed";
   nodes[node_key] = std::make_unique<NodeDraft>();
 }
 
@@ -218,10 +221,15 @@ void
 TreeBuilder::SetNumericalTestNode(int node_key, unsigned feature_id, const char* opname,
                                   Value threshold, bool default_left, int left_child_key,
                                   int right_child_key) {
-  CHECK_GT(optable.count(opname), 0) << "No operator \"" << opname << "\" exists";
-  Operator op = optable.at(opname);
-  SetNumericalTestNode(node_key, feature_id, op, std::move(threshold), default_left,
-                       left_child_key, right_child_key);
+  Operator op;
+  try {
+    op = optable.at(opname);
+  } catch (std::out_of_range) {
+    dmlc::LogMessageFatal(__FILE__, __LINE__).stream()
+        << "No operator \"" << opname << "\" exists";
+  }
+  SetNumericalTestNode(node_key, feature_id, op, std::move(threshold),
+                       default_left, left_child_key, right_child_key);
 }
 
 void
@@ -233,16 +241,29 @@ TreeBuilder::SetNumericalTestNode(int node_key, unsigned feature_id, Operator op
     << "SetNumericalTestNode: threshold has an incorrect type. "
     << "Expected: " << TypeInfoToString(tree.threshold_type)
     << ", Given: " << TypeInfoToString(threshold.GetValueType());
-  CHECK_GT(nodes.count(node_key), 0) << "SetNumericalTestNode: no node found with node_key";
-  CHECK_GT(nodes.count(left_child_key), 0)
-    << "SetNumericalTestNode: no node found with left_child_key";
-  CHECK_GT(nodes.count(right_child_key), 0)
-    << "SetNumericalTestNode: no node found with right_child_key";
-  NodeDraft* node = nodes[node_key].get();
-  NodeDraft* left_child = nodes[left_child_key].get();
-  NodeDraft* right_child = nodes[right_child_key].get();
+  _Node* node;
+  try {
+    node = nodes.at(node_key).get();
+  } catch (std::out_of_range) {
+    dmlc::LogMessageFatal(__FILE__, __LINE__).stream()
+        << "SetNumericalTestNode: no node found with node_key";
+  }
+  _Node* left_child;
+  try {
+    left_child = nodes.at(left_child_key).get();
+  } catch (std::out_of_range) {
+    dmlc::LogMessageFatal(__FILE__, __LINE__).stream()
+        << "SetNumericalTestNode: no node found with left_child_key";
+  }
+  _Node* right_child;
+  try {
+    right_child = nodes.at(right_child_key).get();
+  } catch (std::out_of_range) {
+    dmlc::LogMessageFatal(__FILE__, __LINE__).stream()
+        << "SetNumericalTestNode: no node found with left_child_key";
+  }
   CHECK(node->status == NodeDraft::Status::kEmpty)
-    << "SetNumericalTestNode: cannot modify a non-empty node";
+      << "SetNumericalTestNode: cannot modify a non-empty node";
   CHECK(!left_child->parent)
     << "SetNumericalTestNode: node designated as left child already has a parent";
   CHECK(!right_child->parent)
