@@ -6,8 +6,10 @@
  */
 
 #include <dmlc/registry.h>
+#include <treelite/fastmap.h>
 #include <treelite/frontend.h>
 #include <treelite/tree.h>
+
 #include <memory>
 #include <queue>
 
@@ -53,7 +55,9 @@ struct NodeDraft {
 
 struct TreeDraft {
   NodeDraft* root;
-  std::unordered_map<int, std::unique_ptr<NodeDraft>> nodes;
+  treelite::containers::FastMap<int, std::unique_ptr<NodeDraft>,
+                                treelite::containers::PassHash<int>>
+      nodes;
   treelite::TypeInfo threshold_type;
   treelite::TypeInfo leaf_output_type;
   inline TreeDraft(treelite::TypeInfo threshold_type, treelite::TypeInfo leaf_output_type)
