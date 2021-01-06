@@ -60,8 +60,12 @@ struct TreeDraft {
       nodes;
   treelite::TypeInfo threshold_type;
   treelite::TypeInfo leaf_output_type;
-  inline TreeDraft(treelite::TypeInfo threshold_type, treelite::TypeInfo leaf_output_type)
-    : root(nullptr), nodes(), threshold_type(threshold_type), leaf_output_type(leaf_output_type) {}
+  inline TreeDraft(treelite::TypeInfo threshold_type,
+                   treelite::TypeInfo leaf_output_type)
+      : root(nullptr),
+        nodes(100000),
+        threshold_type(threshold_type),
+        leaf_output_type(leaf_output_type) {}
 };
 
 }  // anonymous namespace

@@ -25,6 +25,7 @@ target_sources(treelite_cpp_test
   PRIVATE  test_main.cc
            test_serializer.cc
            test_frontend.cc
+           test_containers.cc
 )
 
 target_include_directories(treelite_cpp_test
