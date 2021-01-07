@@ -5,6 +5,7 @@
  * \author Hyunsu Cho
  */
 
+#include <dmlc/logging.h>
 #include <dmlc/registry.h>
 #include <treelite/fastmap.h>
 #include <treelite/frontend.h>
