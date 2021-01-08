@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
-#include <unordered_map>
 
 #include "./typeinfo.h"
 
@@ -34,7 +33,35 @@ enum class Operator : int8_t {
 };
 
 /*! \brief conversion table from string to Operator, defined in tables.cc */
-extern const std::unordered_map<std::string, Operator> optable;
+inline Operator NameToOp(std::string name) {
+  if (name == "==") {
+    return Operator::kEQ;
+  } else if (name == "<") {
+    return Operator::kLT;
+  } else if (name == "<=") {
+    return Operator::kLE;
+  } else if (name == ">") {
+    return Operator::kGT;
+  } else if (name == ">=") {
+    return Operator::kGE;
+  } else {
+    throw(std::out_of_range("no operator of given name exists"));
+  }
+}
+/*switch (name) {
+  case "==":
+    return Operator::kEQ;
+  case "<":
+    return Operator::kLT;
+  case "<=":
+    return Operator::kLE;
+  case ">":
+    return Operator::kGT;
+  case ">=":
+    return Operator::kGE;
+  default:
+    throw(std::out_of_range("no operator of given name exists"));
+}*/
 
 /*!
  * \brief get string representation of comparison operator
