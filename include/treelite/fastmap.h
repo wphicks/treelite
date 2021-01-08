@@ -1,5 +1,15 @@
+/*!
+ * Copyright (c) 2021 by Contributors
+ * \file fastmap.h
+ * \brief provides a fast hash table implementation
+ * \author William Hicks
+ */
+#ifndef TREELITE_FASTMAP_H_
+#define TREELITE_FASTMAP_H_
+
 #include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <iterator>
 #include <memory>
 #include <utility>
@@ -20,18 +30,6 @@ template <typename Key, typename T>
 struct FastMapEntry {
   std::pair<Key, T> entry;
   bool valid;
-  /* FastMapEntry() : entry{}, valid(false){};
-  FastMapEntry(std::pair<Key, T> new_entry, bool new_validity)
-      : entry{new_entry}, valid{new_validity} {};
-  FastMapEntry(FastMapEntry<Key, T>&& other)
-      : entry{std::move(other.entry.first), std::move(other.entry.second)},
-        valid{other.valid} {};
-  FastMapEntry& operator=(FastMapEntry<Key, T>&& other) {
-    entry = std::make_pair(std::move(other.entry.first),
-                           std::move(other.entry.second));
-    valid = other.valid;
-    return *this;
-  }; */
 };
 
 /*!
@@ -50,6 +48,12 @@ class FastMap {
   FastMap(const size_type hinted_size)
       : data{}, size_hint_{hinted_size}, hash{}, key_equal{}, size_{0} {
     data.reserve(size_hint_);
+  };
+  FastMap(std::initializer_list<value_type> kv_pairs)
+      : FastMap(kv_pairs.size()) {
+    for (auto kv : kv_pairs) {
+      (*this)[kv.first] = kv.second;
+    }
   };
   FastMap() : FastMap(2048){};  // Default to 2048 entries as target size
   auto get_allocator() { return data.get_allocator(); }
@@ -102,15 +106,11 @@ class FastMap {
   };
 
   auto begin() { return Iterator<mapped_type>(data.begin(), data.end()); }
-  /* auto cbegin() {
-    return Iterator<typename std::vector<entry_type_>::const_iterator>(
-        data.cbegin(), data.cend());
-  } */
+  auto cbegin() {
+    return Iterator<const mapped_type>(data.begin(), data.end());
+  }
   auto end() { return Iterator<mapped_type>(data.end(), data.end()); }
-  /* auto cend() {
-    return Iterator<typename std::vector<entry_type_>::const_iterator>(
-        data.cend(), data.cend());
-  } */
+  auto cend() { return Iterator<const mapped_type>(data.end(), data.end()); }
 
   // Capacity
   auto empty() { return size_ == 0; }
@@ -238,5 +238,7 @@ class FastMap {
   KeyEqual key_equal;
 };
 
-} // namespace containers
-} // namespace treelite
+}  // namespace containers
+}  // namespace treelite
+
+#endif  // TREELITE_FASTMAP_H_

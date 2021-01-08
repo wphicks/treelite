@@ -11,12 +11,10 @@
 
 namespace treelite {
 
-const std::unordered_map<std::string, Operator> optable{
-  {"==", Operator::kEQ},
-  {"<",  Operator::kLT},
-  {"<=", Operator::kLE},
-  {">",  Operator::kGT},
-  {">=", Operator::kGE}
-};
+const std::unordered_map<std::string, Operator> optable{{"==", Operator::kEQ},
+                                                        {"<", Operator::kLT},
+                                                        {"<=", Operator::kLE},
+                                                        {">", Operator::kGT},
+                                                        {">=", Operator::kGE}};
 
 }  // namespace treelite

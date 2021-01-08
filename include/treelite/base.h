@@ -8,10 +8,11 @@
 #define TREELITE_BASE_H_
 
 #include <cstdint>
-#include <typeinfo>
-#include <string>
-#include <unordered_map>
 #include <stdexcept>
+#include <string>
+#include <typeinfo>
+#include <unordered_map>
+
 #include "./typeinfo.h"
 
 namespace treelite {

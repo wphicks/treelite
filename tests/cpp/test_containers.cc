@@ -97,7 +97,7 @@ TEST(FastMapTest, Iterators) {
   ASSERT_EQ(map.size(), 0);
   ASSERT_EQ(count, 0);
 
-  /* count = 0;
+  count = 0;
   for (auto iter = map.cbegin(); iter != map.cend(); ++iter) {
     ++count;
   }
@@ -110,9 +110,9 @@ TEST(FastMapTest, Iterators) {
 
   count = 0;
   for (auto iter = map.cbegin(); iter != map.cend(); ++iter) {
-    ASSERT_EQ(*iter, count);
+    ASSERT_EQ(iter->second, count);
     ++count;
-  } */
+  }
 
   count = 0;
   for (auto iter = map.begin(); iter != map.end(); ++iter) {
