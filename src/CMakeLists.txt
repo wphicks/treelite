@@ -95,7 +95,6 @@ target_sources(objtreelite
     frontend/xgboost_util.cc
     annotator.cc
     filesystem.cc
-    optable.cc
     reference_serializer.cc
     ${PROJECT_SOURCE_DIR}/include/treelite/annotator.h
     ${PROJECT_SOURCE_DIR}/include/treelite/base.h
